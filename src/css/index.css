@@ -1,0 +1,225 @@
+@font-face {
+  font-family: 'TI4';
+  src: url('./fonts/Handel-Gothic-D-Bold.otf') format('opentype');
+}
+
+html {
+  background: url('../img/bg.png');
+  background-size: 75vw;
+  background-color: black;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+}
+
+#root {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  --size: 14;
+  font-family:'TI4';
+}
+
+.start {
+  display: flex;
+  flex-direction: column;
+  background: url('../img/setup_bg.jpg');
+  background-size: contain;
+  color: black;
+  border: 1px solid gray;
+  padding: 5px;
+  border-radius: 5px;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.title {
+  font-size: 40pt;
+  color: rgb(255, 119, 0);
+  -webkit-text-stroke: 2px black;
+  padding: 10px;
+}
+
+.star {
+  font-size: 20pt;
+  -webkit-text-stroke: 1.2px black
+}
+
+.ti4 {
+  color: rgb(255, 0, 76);
+}
+
+.start div {
+  margin: 5px;
+}
+
+.start hr {
+  width: 50%;
+}
+
+.setup {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  background: url('../img/setup_bg.jpg');
+  background-size: contain;
+  color: black;
+  border: 1px solid gray;
+  padding: 5px;
+  border-radius: 5px;
+  gap: 5px;
+  justify-items: center;
+}
+
+.claim {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  background: url('../img/setup_bg.jpg');
+  background-size: contain;
+  color: black;
+  border: 1px solid gray;
+  padding: 5px;
+  border-radius: 5px;
+  gap: 5px;
+  justify-items: center;
+}
+
+.menu {
+  height: 5vw;
+  flex-basis: 100%;
+  display: grid;
+  grid-template-columns: repeat(4,auto);
+  grid-template-areas:
+    "gcode round atbat."
+    "pcode turn ondeck .";
+  background: url('../img/setup_bg.jpg');
+  background-size: 50vw;
+  border-bottom: 0.2vw solid rgb(71, 71, 71);
+  padding: 1vw;
+  font-size: 2vw;
+  color: black;
+}
+
+.display {
+  display: flex;
+  box-sizing: border-box;
+  height: calc(100% - 7.2vw);
+  overflow: scroll;
+}
+
+.draft {
+  position: relative;
+  width: 20vw;
+  background: url('../img/draft_bg.jpg');
+  background-size: 50vw;
+  border-right: 0.2vw solid rgb(71, 71, 71);
+  overflow: scroll;
+  background-attachment: local;
+}
+
+.draft::before {
+  position: relative;
+  display: block;
+  content: "";
+  height: calc(5 * var(--size) * 0.866vw + 2vw);
+}
+
+.map {
+  position: relative;
+  width: 80vw;
+  overflow: auto;
+}
+
+.map::before {
+  position: relative;
+  display: block;
+  content: "";
+  height: calc(7 * var(--size) * 0.866vw + 2vw)
+}
+
+.hex {
+  position: absolute;
+  width: calc(var(--size) * 0.99 * 1vw);
+  height: calc(var(--size) * 0.99 * 0.866vw);
+  clip-path: polygon(100% 50%, 75% 100%, 25% 100%, 0 50%, 25% 0, 75% 0, 100% 50%);
+  background: linear-gradient(0.33turn, rgba(255,255,255,0.75), rgba(204,204,204,0.75));
+}
+
+.mr {
+  background: linear-gradient(0.33turn, rgba(255,215,0,0.75), rgba(204,172,0,0.75));
+}
+
+.ring1 {
+  background: linear-gradient(0.33turn, rgba(135,206,235,0.75), rgba(108,165,188,0.75));
+}
+
+.ring2 {
+  background: linear-gradient(0.33turn, rgba(0,0,255,0.75), rgba(0,0,180,0.75));
+}
+
+.ring3 {
+  background: linear-gradient(0.33turn, rgba(0,0,128,0.75), rgba(0,0,80,0.75));
+}
+
+.hs {
+  background: linear-gradient(0.33turn, rgba(0,128,0,0.75), rgba(0,80,0,0.75));
+}
+
+.info {
+  transform: translate(calc(var(--size) * 0.5vw - 50%),calc(var(--size) * 0.433vw - 50%));
+  content: attr(text);
+  visibility: hidden;
+  position: absolute;
+  border: 0.1vw rgba(210, 255, 210, 0.9) solid;
+  background: linear-gradient(to right, rgba(0,0,0,0.75), rgba(0,45,0,0.6));
+  color: white;
+  font-size: calc(var(--size) * 0.08vw);
+  z-index: 1;
+  padding: 0.5vw;
+  border-radius: 0.5vw;
+  box-shadow: inset 0 0 0.5vw green, 0 0 0.5vw green;
+  box-sizing: border-box;
+  max-width: calc(var(--size) * 1vw);
+}
+
+.hex-container:hover .info {
+  visibility: visible;
+}
+
+.used {
+  box-shadow: inset 0 0 10vw rgba(255,0,0,0.75);
+}
+
+.used+.info {
+  border: 0.1vw rgba(255, 210, 210, 0.9) solid;
+  background: linear-gradient(to right, rgba(0,0,0,0.75), rgba(45,0,0,0.6));
+  box-shadow: inset 0 0 0.5vw rgb(128, 0, 0), 0 0 0.5vw rgb(128, 0, 0);
+}
+
+.selected {
+  box-shadow: inset 0 0 10vw rgba(255,255,0,0.75);
+}
+
+.selected+.info {
+  border: 0.1vw rgba(255, 255, 210, 0.9) solid;
+  background: linear-gradient(to right, rgba(0,0,0,0.75), rgba(45,45,0,0.6));
+  box-shadow: inset 0 0 0.5vw rgb(128, 128, 0), 0 0 0.5vw rgb(128, 128, 0);
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  padding-left: 1.5vw;
+}
+
+li::marker {
+  content: "✦";
+}
+
+li li::marker {
+  content: "✧"
+}
