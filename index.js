@@ -56,8 +56,10 @@ const reds = [
 ]
 
 const anomalies = [41, 42, 43, 44, 45, 56, 67, 68, 79, 80, 81]
+const alphas = [26, 39, 79]
+const betas = [25, 40, 64]
 
-const validatePlacement = (tile, key, round, mapTiles, playerTiles) => {
+const validatePlacement = (key, round, mapTiles) => {
   // check if in right ring
   if(round === 0 && !ring1.includes(key)) {
     console.log('failure: wrong ring')
@@ -79,8 +81,13 @@ const validatePlacement = (tile, key, round, mapTiles, playerTiles) => {
     return false
   }
 
-  // check if anomaly
-  if(!anomalies.includes(tile)) {
+  return true
+}
+
+const validatePlacementAgainst = (tile, key, round, mapTiles, playerTiles, array) => {
+
+  // check if in array
+  if(!array.includes(tile)) {
     console.log('successs: right ring, free space, not anomaly')
     return true
   }
@@ -89,7 +96,7 @@ const validatePlacement = (tile, key, round, mapTiles, playerTiles) => {
 
   // are there adjacent anomalies? if not, all good
   const adjacentTiles = adjacents(key).map(_key => mapTiles[keys.indexOf(_key)])
-  const adjacentAnomalies = adjacentTiles.filter(_tile => anomalies.includes(_tile))
+  const adjacentAnomalies = adjacentTiles.filter(_tile => array.includes(_tile))
   if(adjacentAnomalies.length === 0) {
     console.log('successs: right ring, free space, anomaly but not adjacent to anomalies')
     return true
@@ -97,7 +104,7 @@ const validatePlacement = (tile, key, round, mapTiles, playerTiles) => {
 
   // if anom adjacent to anom, check if you have non-anomalies. if so, bad
   const playerTilesLeft = playerTiles.filter(_tile => !mapTiles.includes(_tile))
-  const playerNonAnomLeft = playerTilesLeft.filter(_tile => !anomalies.includes(_tile))
+  const playerNonAnomLeft = playerTilesLeft.filter(_tile => !array.includes(_tile))
   if(playerNonAnomLeft.length > 0) {
     console.log('failure: non-anomalies left in hand')
     return false
@@ -112,7 +119,7 @@ const validatePlacement = (tile, key, round, mapTiles, playerTiles) => {
     // to put an anomaly, so false
     const altKey = keysLeft[i]
     const altAdjacentTiles = adjacents(altKey).map(_key => mapTiles[keys.indexOf(_key)])
-    const altAdjacentAnomalies = altAdjacentTiles.filter(_tile => anomalies.includes(_tile))
+    const altAdjacentAnomalies = altAdjacentTiles.filter(_tile => array.includes(_tile))
     if(altAdjacentAnomalies.length === 0) {
       console.log('failure: free spaces not adjacent to anomalies left')
       return false
@@ -262,7 +269,12 @@ io.on('connection', (socket) => {
   socket.on('place', (tile, key) => {
     if(draft.round % 2 === 0 && playerIndex !== draft.turn) return
     if(draft.round % 2 === 1 && playerIndex !== 5-draft.turn) return
-    if(validatePlacement(tile, key, draft.round, draft.mapTiles, draft.players[playerIndex].tiles)) {
+    if(
+      validatePlacement(key, draft.round, draft.mapTiles) &&
+      validatePlacementAgainst(tile, key, draft.round, draft.mapTiles, draft.players[playerIndex].tiles, anomalies) &&
+      validatePlacementAgainst(tile, key, draft.round, draft.mapTiles, draft.players[playerIndex].tiles, alphas) &&
+      validatePlacementAgainst(tile, key, draft.round, draft.mapTiles, draft.players[playerIndex].tiles, betas)
+    ) {
       draft.mapTiles[keys.indexOf(key)] = tile
       draft.turn = (draft.turn + 1) % 6
       if(draft.turn === 0) draft.round += 1
