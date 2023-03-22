@@ -30,10 +30,10 @@ const keys = [
   66
 ]
 
-const adjacent = (key1, key2) => [1, 9, 10].includes(Math.abs(key1-key2))
+const adjacent = (key1, key2) => [1, 10, 11].includes(Math.abs(key1-key2))
 
 const adjacents = (key) => {
-  const possibilities = [key - 1, key + 1, key - 9, key + 9, key - 10, key + 10]
+  const possibilities = [key - 1, key + 1, key - 11, key + 11, key - 10, key + 10]
   return possibilities.filter(possibility => keys.includes(possibility))
 }
 
@@ -59,27 +59,49 @@ const anomalies = [41, 42, 43, 44, 45, 56, 67, 68, 79, 80, 81]
 
 const validatePlacement = (tile, key, round, mapTiles, playerTiles) => {
   // check if in right ring
-  if(round === 0 && !ring1.includes(key)) return false
-  if((round === 1 || round === 2) && !ring2.includes(key)) return false
-  if((round === 3 || round === 4) && !ring3.includes(key)) return false
+  if(round === 0 && !ring1.includes(key)) {
+    console.log('failure: wrong ring')
+    return false
+  }
+  if((round === 1 || round === 2) && !ring2.includes(key)) {
+    console.log('failure: wrong ring')
+    return false
+  }
+
+  if((round === 3 || round === 4) && !ring3.includes(key)) {
+    console.log('failure: wrong ring')
+    return false
+  }
 
   //check if empty? maybe be precluded by UI
-  if(mapTiles[keys.indexOf(key)]) return false
+  if(mapTiles[keys.indexOf(key)]) {
+    console.log('failure: space filled')
+    return false
+  }
 
   // check if anomaly
-  if(!anomalies.includes(tile)) return true
+  if(!anomalies.includes(tile)) {
+    console.log('successs: right ring, free space, not anomaly')
+    return true
+  }
 
   // so now we have an anomaly being put in an empty space in the right ring
 
   // are there adjacent anomalies? if not, all good
   const adjacentTiles = adjacents(key).map(_key => mapTiles[keys.indexOf(_key)])
   const adjacentAnomalies = adjacentTiles.filter(_tile => anomalies.includes(_tile))
-  if(adjacentAnomalies.length === 0) return true
+  if(adjacentAnomalies.length === 0) {
+    console.log('successs: right ring, free space, anomaly but not adjacent to anomalies')
+    return true
+  }
 
   // if anom adjacent to anom, check if you have non-anomalies. if so, bad
   const playerTilesLeft = playerTiles.filter(_tile => !mapTiles.includes(_tile))
   const playerNonAnomLeft = playerTilesLeft.filter(_tile => !anomalies.includes(_tile))
-  if(playerNonAnomLeft.length > 0) return false
+  if(playerNonAnomLeft.length > 0) {
+    console.log('failure: non-anomalies left in hand')
+    return false
+  }
 
   // so we have an anom adjacent to an anom--but is there another place we can put it?
   const ring = round === 0 ? ring1 : round < 3 ? ring2 : ring3
@@ -91,10 +113,14 @@ const validatePlacement = (tile, key, round, mapTiles, playerTiles) => {
     const altKey = keysLeft[i]
     const altAdjacentTiles = adjacents(altKey).map(_key => mapTiles[keys.indexOf(_key)])
     const altAdjacentAnomalies = altAdjacentTiles.filter(_tile => anomalies.includes(_tile))
-    if(altAdjacentAnomalies.length === 0) return false
+    if(altAdjacentAnomalies.length === 0) {
+      console.log('failure: free spaces not adjacent to anomalies left')
+      return false
+    }
   }
 
   // if we made it this far... it's an anomaly adjacent to an anomaly but all other empty spaces lead to this, too
+  console.log('success: you only have anomalies left and the only free spaces are next to anomalies--ok!')
   return true
 }
 
@@ -236,8 +262,7 @@ io.on('connection', (socket) => {
   socket.on('place', (tile, key) => {
     if(draft.round % 2 === 0 && playerIndex !== draft.turn) return
     if(draft.round % 2 === 1 && playerIndex !== 5-draft.turn) return
-    //if(validatePlacement(tile, key, draft.round, draft.mapTiles, draft.players[playerIndex].tiles)) {
-    if(true) {
+    if(validatePlacement(tile, key, draft.round, draft.mapTiles, draft.players[playerIndex].tiles)) {
       draft.mapTiles[keys.indexOf(key)] = tile
       draft.turn = (draft.turn + 1) % 6
       if(draft.turn === 0) draft.round += 1

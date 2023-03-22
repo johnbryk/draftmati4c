@@ -20,7 +20,7 @@ const Menu = ({ draft }) => {
 
   return(
     <div className='menu'>
-      <GridArea area='gcode'>Game Code: {draft.code}</GridArea>
+      <GridArea area='gcode'>Draft Code: {draft.code}</GridArea>
       <GridArea area='pcode'>{draft.players[draft.playerIndex].name}'s Player Code: {draft.playerCode} </GridArea>
       <GridArea area='atbat'>{activeIndex === draft.playerIndex ? "Your" : `${draft.players[activeIndex].name}'s`} Turn</GridArea>
       <GridArea area='ondeck'>Up Next: {nextIndex === draft.playerIndex ? "You" : draft.players[nextIndex].name} {nextIndex === activeIndex ? "again" : null}</GridArea>
