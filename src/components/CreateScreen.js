@@ -28,7 +28,7 @@ const factions = [
   {faction: 'The Yssaril Tribes', tileNo: 15}
 ]
 
-const CreateScreen = ({ createDraft }) => {
+const CreateScreen = ({ createDraft, setScreen }) => {
 
   const [ newDraft, setNewDraft ] = useState({
     code: '',
@@ -79,6 +79,8 @@ const CreateScreen = ({ createDraft }) => {
       </React.Fragment>)}
       <button onClick={() => createDraft(newDraft)}>Submit</button>
       <button onClick={randomize}>Radomize Order</button>
+      <hr />
+      <button className='doublewide' onClick={() => setScreen('start')}>Back</button>
     </div>
   )
 }

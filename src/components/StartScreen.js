@@ -21,10 +21,10 @@ const StartScreen = ({ startNewDraft, loadDraft }) => {
       <div className='title'>
         DRAFT<Star />MA<TI4 />C
       </div>
-      <hr />
       <div>
         <button onClick={startNewDraft}>New Draft</button>
       </div>
+      <hr />
       <div>
         <button onClick={() => loadDraft(value)}>Load Draft</button>
       </div>

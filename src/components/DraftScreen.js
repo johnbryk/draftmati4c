@@ -22,18 +22,25 @@ const keys = [
   66
 ]
 
-const DraftScreen = ({ draft, loadPlayer }) => {
+const DraftScreen = ({ draft, loadPlayer, viewMap }) => {
 
   const [selected, setSelected] = useState(-1)
 
   const socket = io(__dirname, {query: {draftCode: draft.code, playerCode: draft.playerCode}})
 
   socket.on('update', () => {
-    loadPlayer(draft.playerCode)
-    setSelected(-1)
+    if(draft.playerIndex === -1) {
+      viewMap()
+    } else {
+      loadPlayer(draft.playerCode)
+      setSelected(-1)
+    }
   })
 
+  const activeIndex = draft.round % 2 === 0 ? draft.turn : (5 - draft.turn)
+
   const onClick = (key) => (() => {
+    if(activeIndex !== draft.playerIndex) return
     if(selected > -1 && !draft.mapTiles[keys.indexOf(key)]) 
     {
       socket.emit('place', draft.playerTiles[selected], key)

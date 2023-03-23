@@ -105,13 +105,24 @@ const App = () => {
       .catch(_error => window.alert('Player code not found.'))
   }
 
+  const viewMap = () => {
+    axios
+    .get(`/view/${draft.code}`)
+    .then(res => {
+      setDraft(res.data)
+      setScreen('draft')
+    })
+    .catch(_error => window.alert('Something went wrong.'))
+  }
+  
+
   return (
     <>
       {
         screen === 'start' ? <StartScreen startNewDraft = {() => setScreen('create')} loadDraft = {loadDraft} /> :
-        screen === 'create' ? <CreateScreen createDraft = {createDraft} /> :
-        screen === 'claim' ? <ClaimScreen draft = {draft} claimPlayer = {claimPlayer} loadPlayer = {loadPlayer} /> :
-        screen === 'draft' ? <DraftScreen draft = {draft} loadPlayer = {loadPlayer} /> : null
+        screen === 'create' ? <CreateScreen createDraft = {createDraft} setScreen = {setScreen}/> :
+        screen === 'claim' ? <ClaimScreen draft = {draft} claimPlayer = {claimPlayer} loadPlayer = {loadPlayer} viewMap = {viewMap} setScreen = {setScreen}/> :
+        screen === 'draft' ? <DraftScreen draft = {draft} loadPlayer = {loadPlayer} viewMap = {viewMap}/> : null
       }
     </>
   )

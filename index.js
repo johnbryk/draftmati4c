@@ -258,6 +258,26 @@ app.post('/claim/:draftCode/:playerIndex', (request, response) => {
   else response.status(404).end()
 })
 
+app.get('/view/:draftCode', (request, response) => {
+  const draftCode = request.params.draftCode
+  const draft = drafts.find(draft => draft.code === draftCode)
+
+  const playerIndex = -1
+
+  const playersRedacted = draft.players.map(player => ({ name: player.name, hs: player.hs }))
+  const out = {
+    code: draft.code,
+    playerCode: 'view',
+    playerIndex: playerIndex,
+    playerTiles: [],
+    players: playersRedacted,
+    mapTiles: draft.mapTiles,
+    turn: draft.turn,
+    round: draft.round
+  }
+  response.json(out)
+})
+
 io.on('connection', (socket) => {
   const draftCode = socket.handshake.query.draftCode
   const playerCode = socket.handshake.query.playerCode

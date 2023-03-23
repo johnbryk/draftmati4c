@@ -6,7 +6,7 @@ import { useState } from 'react'
 // no playerTiles
 
 
-const ClaimScreen = ({ draft, claimPlayer, loadPlayer }) => {
+const ClaimScreen = ({ draft, claimPlayer, loadPlayer, viewMap, setScreen }) => {
 
   const [ values, setValues ] = useState(new Array(6).fill(''))
 
@@ -38,6 +38,9 @@ const ClaimScreen = ({ draft, claimPlayer, loadPlayer }) => {
         </>
         }
       </React.Fragment>)}
+      <button className='triplewide' onClick={viewMap}>View Map</button>
+      <hr />
+      <button className='triplewide' onClick={() => setScreen('start')}>Back</button>
     </div>
   )
 }
